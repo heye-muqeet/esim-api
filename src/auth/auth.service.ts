@@ -5,14 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from '../user/user.entity';
+import { SignUpDto } from './dto/signup.dto';
+import { UserResponseDto } from 'src/user/dto/user-response.dto';
 
 type Response = {
   success: boolean;
   message: string;
-  user: {
-    id: number;
-    email: string;
-  };
+  user: UserResponseDto;
   accessToken: string;
 };
 
@@ -36,24 +35,33 @@ export class AuthService {
     return isPasswordValid ? user : null;
   }
 
-  async signUp(email: string, password: string): Promise<Response> {
-    const existingUser = await this.usersRepository.findOne({ where: { email } });
+  async signUp(signUpDto: SignUpDto): Promise<Response> {
+    const existingUser = await this.usersRepository.findOne({
+      where: { email: signUpDto.email }
+    });
 
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = this.usersRepository.create({ email, password: hashedPassword });
+    const hashedPassword = await bcrypt.hash(signUpDto.password, 10);
+    const user = this.usersRepository.create({
+      name: signUpDto.name,
+      email: signUpDto.email,
+      password: hashedPassword,
+      photo: signUpDto.photo
+    });
     const newUser = await this.usersRepository.save(user);
-
     const accessToken = this.generateToken(newUser.id);
+
 
     return {
       success: true,
       message: 'User registered successfully',
       user: {
         id: newUser.id,
+        name: newUser.name,
+        photo: newUser.photo,
         email: newUser.email,
       },
       accessToken: accessToken.accessToken,
@@ -69,6 +77,8 @@ export class AuthService {
       message: 'User registered successfully',
       user: {
         id: user.id,
+        name: user.name,
+        photo: user.photo,
         email: user.email,
       },
       accessToken: accessToken.accessToken,
@@ -80,7 +90,7 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload, {
         secret: process.env.JWT_SECRET,
-        expiresIn: process.env.JWT_EXPIRES_IN,
+        // expiresIn: process.env.JWT_EXPIRES_IN,
       }),
     };
   }
