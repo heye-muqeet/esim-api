@@ -49,7 +49,6 @@ export class AuthService {
       name: signUpDto.name,
       email: signUpDto.email,
       password: hashedPassword,
-      photo: signUpDto.photo
     });
     const newUser = await this.usersRepository.save(user);
     const accessToken = this.generateToken(newUser.id);
@@ -61,7 +60,6 @@ export class AuthService {
       user: {
         id: newUser.id,
         name: newUser.name,
-        photo: newUser.photo,
         email: newUser.email,
       },
       accessToken: accessToken.accessToken,
@@ -78,7 +76,6 @@ export class AuthService {
       user: {
         id: user.id,
         name: user.name,
-        photo: user.photo,
         email: user.email,
       },
       accessToken: accessToken.accessToken,
