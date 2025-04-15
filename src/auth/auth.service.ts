@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { SignUpDto } from './dto/signup.dto';
-import { UserResponseDto } from 'src/user/dto/user-response.dto';
+import { UserResponseDto } from 'src/dto/user-response.dto';
 import { User } from 'src/typeorm/entities/user.entity';
 
 type Response = {
