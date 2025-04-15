@@ -4,7 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
-import { User } from '../user/user.entity';
+import { User } from 'src/typeorm/entities/user.entity';
 
 @Controller('auth')
 export class AuthController {

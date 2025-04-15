@@ -4,9 +4,9 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { User } from '../user/user.entity';
 import { SignUpDto } from './dto/signup.dto';
 import { UserResponseDto } from 'src/user/dto/user-response.dto';
+import { User } from 'src/typeorm/entities/user.entity';
 
 type Response = {
   success: boolean;
