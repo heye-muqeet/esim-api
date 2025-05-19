@@ -1,4 +1,4 @@
-// src/user/dto/user-response.dto.ts
+// src/dto/user-response.dto.ts
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()

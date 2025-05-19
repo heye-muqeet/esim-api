@@ -1,34 +1,59 @@
-import { Injectable } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserParams } from 'src/utils/types';
-import { User } from 'src/typeorm/entities/user.entity';
+import { CreateUserParams } from '../utils/types';
+import { User } from '../typeorm/entities/user.entity';
 
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(User) private userRepository: Repository<User>) { }
 
-  createUser(CreateDetails: CreateUserParams) {
-    const newUser = this.userRepository.create(CreateDetails);
-
-
+  createUser(createDetails: CreateUserParams) {
+    const newUser = this.userRepository.create(createDetails);
     return this.userRepository.save(newUser);
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    if (!id) {
+      throw new BadRequestException('Invalid user ID');
+    }
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateDetails: Partial<User>) {
+    if (!id) {
+      throw new BadRequestException('Invalid user ID');
+    }
+    if (!updateDetails || Object.keys(updateDetails).length === 0) {
+      throw new BadRequestException('No update details provided');
+    }
+
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    await this.userRepository.update(id, updateDetails);
+    return this.userRepository.findOne({ where: { id } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    if (!id) {
+      throw new BadRequestException('Invalid user ID');
+    }
+    const user = await this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    await this.userRepository.delete(id);
+    return { message: 'User deleted successfully' };
   }
 }

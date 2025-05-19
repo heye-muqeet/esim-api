@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { SimDetails } from "./sim-details.entity";
 
 @Entity({ name: "user" })
 export class User {
@@ -14,9 +15,15 @@ export class User {
     @Column()
     password: string;
 
+    @Column({ nullable: true })
+    stripeCustomerId?: string;
+
     @CreateDateColumn()
     createdAt: Date;
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @OneToMany(() => SimDetails, simDetails => simDetails.user)
+    simDetails: SimDetails[];
 }

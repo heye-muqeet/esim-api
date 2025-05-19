@@ -1,10 +1,11 @@
-// src/stripe/stripe.module.ts
 import { Module } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { StripeController } from './stripe.controller';
+import { UsersModule } from '../users/users.module';
 
 @Module({
+  imports: [UsersModule],
   providers: [StripeService],
   controllers: [StripeController],
 })
-export class StripeModule {}
+export class StripeModule { }

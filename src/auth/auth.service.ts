@@ -1,12 +1,11 @@
-// auth.service.ts
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { SignUpDto } from './dto/signup.dto';
-import { UserResponseDto } from 'src/dto/user-response.dto';
-import { User } from 'src/typeorm/entities/user.entity';
+import { UserResponseDto } from '../dto/user-response.dto';
+import { User } from '../typeorm/entities/user.entity';
 
 type Response = {
   success: boolean;
@@ -21,9 +20,8 @@ export class AuthService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
-  // Add this method
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.usersRepository.findOne({ where: { email } });
 
@@ -37,7 +35,7 @@ export class AuthService {
 
   async signUp(signUpDto: SignUpDto): Promise<Response> {
     const existingUser = await this.usersRepository.findOne({
-      where: { email: signUpDto.email }
+      where: { email: signUpDto.email },
     });
 
     if (existingUser) {
@@ -53,7 +51,6 @@ export class AuthService {
     const newUser = await this.usersRepository.save(user);
     const accessToken = this.generateToken(newUser.id);
 
-
     return {
       success: true,
       message: 'User registered successfully',
@@ -63,7 +60,7 @@ export class AuthService {
         email: newUser.email,
       },
       accessToken: accessToken.accessToken,
-    }
+    };
   }
 
   async login(user: User): Promise<Response> {
@@ -72,14 +69,14 @@ export class AuthService {
 
     return {
       success: true,
-      message: 'User registered successfully',
+      message: 'User Login successfully',
       user: {
         id: user.id,
         name: user.name,
         email: user.email,
       },
       accessToken: accessToken.accessToken,
-    }
+    };
   }
 
   private generateToken(userId: number) {

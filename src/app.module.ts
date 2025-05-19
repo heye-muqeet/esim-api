@@ -1,3 +1,4 @@
+// app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -6,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { StripeService } from './stripe/stripe.service';
 import { StripeController } from './stripe/stripe.controller';
 import { StripeModule } from './stripe/stripe.module';
+import { SimDetailsModule } from './sim-details/sim-details.module';
 
 @Module({
   imports: [
@@ -28,7 +30,8 @@ import { StripeModule } from './stripe/stripe.module';
     }),
     AuthModule,
     UsersModule,
-    StripeModule
+    StripeModule,
+    SimDetailsModule,
   ],
   providers: [StripeService],
   controllers: [StripeController],
