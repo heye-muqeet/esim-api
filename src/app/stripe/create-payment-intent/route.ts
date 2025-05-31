@@ -1,14 +1,8 @@
 // pages/api/stripe/create-payment-intent.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { authMiddleware } from '@/middleware/auth';
 import { stripeService } from '@/utils/stripe';
-
-const paymentIntentSchema = z.object({
-    amount: z.number().positive('Amount must be positive'),
-    currency: z.string().min(3, 'Currency is required').max(3, 'Invalid currency'),
-    payment_method_type: z.enum(['card'], { errorMap: () => ({ message: 'Invalid payment method type' }) }), // Add 'paypal' if supported
-});
+import { paymentIntentSchema } from '@/lib/schemas';
 
 export async function POST(req: NextRequest) {
     console.log('Received POST to /api/stripe/create-payment-intent'); // Debug log
