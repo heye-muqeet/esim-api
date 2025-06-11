@@ -62,7 +62,7 @@ export class StripeService {
             // Create ephemeral key
             const ephemeralKey = await this.stripe.ephemeralKeys.create(
                 { customer: customerId },
-                { apiVersion: '2025-03-31.basil' }
+                { apiVersion: '2025-05-28.basil' }
             );
 
             return {
