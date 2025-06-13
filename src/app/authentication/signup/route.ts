@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import db from '@/utils/prisma';
 import { generateInviteCode } from '@/utils/referral';
+import { PrismaClient } from '@prisma/client';
 
 const registrationSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return await db.$transaction(async (tx) => {
+    return await db.$transaction(async (tx: PrismaClient) => {
       const existingUser = await tx.user.findFirst({
         where: { email: email.toLowerCase() },
       });
@@ -68,6 +69,7 @@ export async function POST(request: Request) {
           password: hashedPassword,
           inviteCode: newInviteCode,
           referredBy: inviteCode || null,
+          credits: inviteCode ? 3.00 : 0.00,
         },
         select: {
           id: true,
