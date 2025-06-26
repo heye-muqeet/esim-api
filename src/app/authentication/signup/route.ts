@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import db from '@/utils/prisma';
 import { generateInviteCode } from '@/utils/referral';
 import { PrismaClient } from '@prisma/client';
+import { Decimal } from '@prisma/client/runtime/library';
 
 const registrationSchema = z.object({
   name: z.string().min(1, 'Name is required.'),
@@ -62,6 +63,9 @@ export async function POST(request: Request) {
 
       const hashedPassword = await bcrypt.hash(password, 10);
       const newInviteCode = await generateInviteCode();
+      
+      // Create new user with 3 credits if they used an invite code
+      const REFERRAL_CREDIT_AMOUNT = new Decimal(3.00);
       const user = await tx.user.create({
         data: {
           name,
@@ -69,7 +73,7 @@ export async function POST(request: Request) {
           password: hashedPassword,
           inviteCode: newInviteCode,
           referredBy: inviteCode || null,
-          credits: inviteCode ? 3.00 : 0.00,
+          credits: inviteCode ? REFERRAL_CREDIT_AMOUNT : new Decimal(0.00),
         },
         select: {
           id: true,
@@ -82,10 +86,11 @@ export async function POST(request: Request) {
         },
       });
 
+      // Give referrer 3 credits as well
       if (referrer) {
         await tx.user.update({
           where: { id: referrer.id },
-          data: { credits: { increment: 3.00 } },
+          data: { credits: { increment: REFERRAL_CREDIT_AMOUNT } },
         });
       }
 
