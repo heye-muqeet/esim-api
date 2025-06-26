@@ -105,6 +105,8 @@ export async function POST(request: Request) {
         },
         { status: 201 }
       );
+    }, {
+      timeout: 10000 // Set timeout to 10 seconds
     });
   } catch (error) {
     console.error('Registration Error:', error);
