@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import db from '@/utils/prisma';
 import { authMiddleware } from '@/middleware/auth';
 
-export async function POST(req: NextRequest) {
-  console.log('Received POST to /user/get');
+export async function GET(req: NextRequest) {
+  console.log('Received GET to /user/get');
 
   const middlewareResponse = await authMiddleware(req);
   if (middlewareResponse) return middlewareResponse;
